@@ -216,7 +216,7 @@ class TwigRenderer implements RendererInterface, TreeRendererInterface
      * @return string|null The script output.
      * @throws \Zend\View\Exception\DomainException
      */
-    public function render($nameOrModel, $values = [])
+    public function render($nameOrModel, $values = null)
     {
         $model = null;
 
@@ -237,15 +237,28 @@ class TwigRenderer implements RendererInterface, TreeRendererInterface
             return null;
         }
 
+        if (null === $values) {
+            $values = [];
+        }
+
         if ($model && $this->canRenderTrees() && $model->hasChildren()) {
             if (!isset($values['content'])) {
                 $values['content'] = '';
             }
-            foreach($model as $child) {
-                /** @var \Zend\View\Model\ViewModel $child */
+            foreach ($model as $child) {
+                /** @var ModelInterface $child */
                 if ($this->canRender($child->getTemplate())) {
                     $template = $this->resolver->resolve($child->getTemplate(), $this);
-                    return $template->render((array) $child->getVariables());
+
+                    $childValues = (array) $child->getVariables();
+                    if ($child->hasChildren()) {
+                        foreach ($child->getChildren() as $grandChild) {
+                            /** @var ModelInterface $grandChild */
+                            $childValues[$grandChild->captureTo()] = $this->render($grandChild);
+                        }
+                    }
+
+                    return $template->render($childValues);
                 }
                 $child->setOption('has_parent', true);
                 $values['content'] .= $this->view->render($child);

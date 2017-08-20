@@ -2,6 +2,7 @@
 
 namespace ZfcTwig\View;
 
+use Zend\Mvc\Plugin\FlashMessenger;
 use Zend\ServiceManager\Factory\InvokableFactory;
 use Zend\View\Helper;
 use Zend\View\HelperPluginManager as ZendHelperPluginManager;
@@ -14,7 +15,7 @@ class HelperPluginManager extends ZendHelperPluginManager
      * @var string[]
      */
     protected $aliases = [
-        'flashmessenger' => Helper\FlashMessenger::class,
+        'flashmessenger' => FlashMessenger\FlashMessenger::class,
         'declarevars' => Helper\DeclareVars::class,
         'htmlflash' => Helper\HtmlFlash::class,
         'htmllist' => Helper\HtmlList::class,
@@ -31,7 +32,7 @@ class HelperPluginManager extends ZendHelperPluginManager
      * @var string[]
      */
     protected $factories = [
-        Helper\FlashMessenger::class => Helper\Service\FlashMessengerFactory::class,
+        FlashMessenger\FlashMessenger::class => InvokableFactory::class,
         Helper\DeclareVars::class => InvokableFactory::class,
         Helper\HtmlFlash::class => InvokableFactory::class,
         Helper\HtmlList::class => InvokableFactory::class,

@@ -1,7 +1,7 @@
 <?php
-namespace ZfcTwigTest\View\Strategy;
+namespace ZfcTwigTest\View;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Twig_Environment;
 use Twig_Loader_Array;
 use Twig_Loader_Chain;
@@ -14,17 +14,21 @@ use ZfcTwig\View\TwigResolver;
 
 class TwigStrategyTest extends TestCase
 {
+    /** @var  TwigRenderer */
+    protected $renderer;
+
+    /** @var  TwigStrategy */
+    protected $strategy;
+
     public function setUp()
     {
         parent::setUp();
 
-        $this->chain  = $chain = new Twig_Loader_Chain();
-        $this->loader = new Twig_Loader_Array(['key1' => 'var1']);
-        $this->chain->addLoader($this->loader);
-        $this->environment = new Twig_Environment($this->chain);
-        $this->renderer    = new TwigRenderer(new View, $this->chain, $this->environment, new TwigResolver($this->environment));
-        $this->strategy    = new TwigStrategy($this->renderer);
-        $this->event       = new ViewEvent();
+        $chain = new Twig_Loader_Chain();
+        $chain->addLoader(new Twig_Loader_Array(['key1' => 'var1']));
+        $environment = new Twig_Environment($chain);
+        $this->renderer = new TwigRenderer(new View, $chain, $environment, new TwigResolver($environment));
+        $this->strategy = new TwigStrategy($this->renderer);
     }
 
     public function testSelectRendererWhenTemplateFound()
@@ -33,7 +37,7 @@ class TwigStrategyTest extends TestCase
         $model = $this->getMockBuilder(ModelInterface::class)->getMock();
         $model->expects($this->at(0))
               ->method('getTemplate')
-              ->will($this->returnValue('key1'));
+              ->willReturn('key1');
 
         $event = new ViewEvent;
         $event->setModel($model);

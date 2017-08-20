@@ -43,7 +43,7 @@
     "require-dev": {
         "zendframework/zend-navigation": "^2.7",
         "zendframework/zend-modulemanager": "^2.7",
-        "phpunit/phpunit": "^5.7.5",
+        "phpunit/phpunit": "^6.0.2",
         "friendsofphp/php-cs-fixer": "^1.11"
     },
     "extra": {
